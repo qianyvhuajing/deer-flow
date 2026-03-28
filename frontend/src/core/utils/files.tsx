@@ -192,9 +192,29 @@ export function getFileExtensionDisplayName(filepath: string) {
   }
 }
 
+export function isImageFile(filepath: string): boolean {
+  const extension = getFileExtension(filepath);
+  const imageExtensions = [
+    "jpg",
+    "jpeg",
+    "png",
+    "gif",
+    "bmp",
+    "tiff",
+    "ico",
+    "webp",
+    "svg",
+    "heic",
+  ];
+  return imageExtensions.includes(extension);
+}
+
 export function getFileIcon(filepath: string, className?: string) {
   const extension = getFileExtension(filepath);
   const { isCodeFile } = checkCodeFile(filepath);
+  if (isImageFile(filepath)) {
+    return <ImageIcon className={className} />;
+  }
   switch (extension) {
     case "skill":
       return <FileCogIcon className={className} />;
@@ -203,17 +223,6 @@ export function getFileIcon(filepath: string, className?: string) {
     case "txt":
     case "md":
       return <BookOpenTextIcon className={className} />;
-    case "jpg":
-    case "jpeg":
-    case "png":
-    case "gif":
-    case "bmp":
-    case "tiff":
-    case "ico":
-    case "webp":
-    case "svg":
-    case "heic":
-      return <ImageIcon className={className} />;
     case "mp3":
     case "wav":
     case "ogg":

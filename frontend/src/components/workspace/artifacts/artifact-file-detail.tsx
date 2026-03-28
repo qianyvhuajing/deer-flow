@@ -34,7 +34,7 @@ import { urlOfArtifact } from "@/core/artifacts/utils";
 import { useI18n } from "@/core/i18n/hooks";
 import { installSkill } from "@/core/skills/api";
 import { streamdownPlugins } from "@/core/streamdown";
-import { checkCodeFile, getFileName } from "@/core/utils/files";
+import { checkCodeFile, getFileName, isImageFile } from "@/core/utils/files";
 import { env } from "@/env";
 import { cn } from "@/lib/utils";
 
@@ -80,6 +80,10 @@ export function ArtifactFileDetail({
     }
     return checkCodeFile(filepath);
   }, [filepath, isWriteFile, isSkillFile]);
+
+  const isImageFile_ = useMemo(() => {
+    return isImageFile(filepath);
+  }, [filepath]);
   const isSupportPreview = useMemo(() => {
     return language === "html" || language === "markdown";
   }, [language]);
@@ -250,11 +254,20 @@ export function ArtifactFileDetail({
             readonly
           />
         )}
-        {!isCodeFile && (
+        {!isCodeFile && !isImageFile_ && (
           <iframe
             className="size-full"
             src={urlOfArtifact({ filepath, threadId, isMock })}
           />
+        )}
+        {isImageFile_ && (
+          <div className="flex h-full w-full items-center justify-center p-4">
+            <img
+              src={urlOfArtifact({ filepath, threadId, isMock })}
+              alt={getFileName(filepath)}
+              className="max-h-full max-w-full object-contain"
+            />
+          </div>
         )}
       </ArtifactContent>
     </Artifact>
