@@ -11,13 +11,13 @@ class TitleConfig(BaseModel):
         description="Whether to enable automatic title generation",
     )
     max_words: int = Field(
-        default=6,
+        default=8,
         ge=1,
         le=20,
         description="Maximum number of words in the generated title",
     )
     max_chars: int = Field(
-        default=60,
+        default=80,
         ge=10,
         le=200,
         description="Maximum number of characters in the generated title",
@@ -27,7 +27,7 @@ class TitleConfig(BaseModel):
         description="Model name to use for title generation (None = use default model)",
     )
     prompt_template: str = Field(
-        default=("Generate a concise title (max {max_words} words) for this conversation.\nUser: {user_msg}\nAssistant: {assistant_msg}\n\nReturn ONLY the title, no quotes, no explanation."),
+        default=("请为这段对话生成一个简洁的标题（最多{max_words}个词）。\n用户: {user_msg}\n助手: {assistant_msg}\n\n只返回标题，不要添加引号，不要解释。请优先使用中文。"),
         description="Prompt template for title generation",
     )
 

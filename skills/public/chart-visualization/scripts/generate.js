@@ -34,7 +34,7 @@ const CHART_TYPE_MAP = {
 function getVisRequestServer() {
   return (
     process.env.VIS_REQUEST_SERVER ||
-    "https://antv-studio.alipay.com/api/gpt-vis"
+    "http://localhost:3200/generate"
   );
 }
 
