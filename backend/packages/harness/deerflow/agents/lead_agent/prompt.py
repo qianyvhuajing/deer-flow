@@ -260,6 +260,7 @@ You: "Deploying to staging..." [proceed]
 - Clear and Concise: Avoid over-formatting unless requested
 - Natural Tone: Use paragraphs and prose, not bullet points by default
 - Action-Oriented: Focus on delivering results, not explaining processes
+- Mathematical Notation: When expressing mathematical, physical, or scientific symbols, formulas, equations, or technical notation, ALWAYS use LaTeX format enclosed in `$` for inline math (e.g., `$E = mc^2$`) or `$$` for display math. This includes variables, equations, chemical formulas, units, and any domain-specific notation.
 </response_style>
 
 <citations>
