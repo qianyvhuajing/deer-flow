@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""
+Example tools.py file for custom agents.
+
+This file demonstrates how to define custom tools using LangChain's @tool decorator.
+These tools will be automatically available to the agent when included via the script parameter.
+
+For product design, this file includes calculation tools for material costs, dimensions, and performance metrics.
+"""
+
+from langchain_core.tools import tool
+
+
+@tool
+def calculate_material_cost(area: float, material_cost_per_unit: float) -> str:
+    """Calculate material cost based on area and cost per unit.
+    
+    Args:
+        area: Area in square units.
+        material_cost_per_unit: Cost per square unit.
+    
+    Returns:
+        Total material cost.
+    """
+    total_cost = area * material_cost_per_unit
+    return f"Total material cost: ${total_cost:.2f}"
+
+
+@tool
+def calculate_volume(length: float, width: float, height: float) -> str:
+    """Calculate volume of a rectangular object.
+    
+    Args:
+        length: Length in units.
+        width: Width in units.
+        height: Height in units.
+    
+    Returns:
+        Volume in cubic units.
+    """
+    volume = length * width * height
+    return f"Volume: {volume:.2f} cubic units"
+
+
+@tool
+def calculate_weight(volume: float, density: float) -> str:
+    """Calculate weight based on volume and density.
+    
+    Args:
+        volume: Volume in cubic units.
+        density: Density in weight per cubic unit.
+    
+    Returns:
+        Weight in specified units.
+    """
+    weight = volume * density
+    return f"Weight: {weight:.2f} units"
+
+
+@tool
+def calculate_production_time(units: int, time_per_unit: float) -> str:
+    """Calculate total production time.
+    
+    Args:
+        units: Number of units to produce.
+        time_per_unit: Time required to produce one unit (in hours).
+    
+    Returns:
+        Total production time in hours.
+    """
+    total_time = units * time_per_unit
+    return f"Total production time: {total_time:.2f} hours"
+
+
+@tool
+def calculate_profit(revenue: float, cost: float) -> str:
+    """Calculate profit based on revenue and cost.
+    
+    Args:
+        revenue: Total revenue from sales.
+        cost: Total cost of production.
+    
+    Returns:
+        Profit and profit margin.
+    """
+    profit = revenue - cost
+    profit_margin = (profit / revenue) * 100 if revenue > 0 else 0
+    return f"Profit: ${profit:.2f}, Profit margin: {profit_margin:.2f}%"
+

@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 def setup_agent(
     soul: str,
     description: str,
+    extra: dict,
     runtime: ToolRuntime,
 ) -> Command:
     """Setup the custom DeerFlow agent.
@@ -22,8 +23,8 @@ def setup_agent(
     Args:
         soul: Full SOUL.md content defining the agent's personality and behavior.
         description: One-line description of what the agent does.
+        extra: Dictionary with additional configuration. Must be provided even if empty.
     """
-
     agent_name: str | None = runtime.context.get("agent_name") if runtime.context else None
 
     try:
@@ -43,6 +44,13 @@ def setup_agent(
 
         soul_file = agent_dir / "SOUL.md"
         soul_file.write_text(soul, encoding="utf-8")
+
+        # Handle script parameter if provided
+        if extra and "script" in extra:
+            script_content = extra["script"]
+            tools_file = agent_dir / "tools.py"
+            tools_file.write_text(script_content, encoding="utf-8")
+            logger.info(f"[agent_creator] Created tools.py for agent '{agent_name}'")
 
         logger.info(f"[agent_creator] Created agent '{agent_name}' at {agent_dir}")
         return Command(

@@ -66,6 +66,49 @@ Don't ask all of these. Pick based on what's still missing from the extraction t
 
 **Extraction:** Failure philosophy, long-term vision, blind spots, boundaries.
 
+## Phase 5 — Design Process
+
+**Goal:** Understand the product design workflow, methodology, and deliverables.
+
+This phase typically takes 1–2 rounds:
+
+**Round A — Design Stages & Tools.** Ask about their design process: "Walk me through your typical design workflow. What are the key stages, and what tools do you use at each step?"
+
+**Round A.1 — Process Optimization.** After understanding their current design process, ask: "Is there anything about your current design process that you'd like to optimize or improve?"
+
+If the user indicates optimization needs:
+- Propose specific improvements based on their feedback
+- Present the optimized design process
+- Ask for feedback and iterate as needed
+- Repeat this process 1-5 rounds until the user confirms the optimized process is acceptable
+
+**Round B — Collaboration & Deliverables.** Based on Round A and any optimization discussions, ask about collaboration style and key deliverables: "How do you collaborate with others during the design process, and what are the most important deliverables you produce?"
+
+**Merge opportunity:** If the user provides a comprehensive overview of their design process in Round A, skip Round B and move to Phase 6.
+
+**Extraction:** Design stages, design tools, collaboration style, key deliverables.
+
+## Phase 6 — Calculation Tools
+
+**Goal:** Define the calculation tools needed for product design and their requirements.
+
+This phase typically takes 1–2 rounds:
+
+**Round A — Required Calculations.** Ask about the calculations they need: "What specific calculations do you need for your product design work? For example, material costs, dimensions, performance metrics, etc."
+
+**Round B — Parameters & Formats.** Once you understand the required calculations, ask about input parameters, output formats, and validation rules: "For each calculation, what inputs are needed, how should the results be formatted, and are there any validation rules to follow?"
+
+**Round C — Code Review & Standardization.** If the user provides their own calculation code or pseudocode:
+- Review the code for compliance with LangChain @tool decorator standards
+- Check for proper type hints, docstrings, and error handling
+- If the code is not standardized, modify it to meet the requirements
+- Present the standardized code to the user and ask for confirmation
+- Iterate based on user feedback until the code is confirmed acceptable
+
+**Merge opportunity:** If the user provides detailed information about both calculations and parameters in Round A, skip Round B and move to the generation phase.
+
+**Extraction:** Required calculations, input parameters, output formats, validation rules.
+
 ## Conversation Techniques
 
 **Mirroring.** Use the user's own words when reflecting back. If they say "energy black hole," you say "energy black hole" — not "significant energy expenditure."

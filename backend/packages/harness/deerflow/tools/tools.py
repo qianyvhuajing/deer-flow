@@ -1,8 +1,12 @@
+import importlib.util
 import logging
+import sys
+from pathlib import Path
 
 from langchain.tools import BaseTool
 
 from deerflow.config import get_app_config
+from deerflow.config.paths import get_paths
 from deerflow.reflection import resolve_variable
 from deerflow.tools.builtins import ask_clarification_tool, present_file_tool, task_tool, view_image_tool
 from deerflow.tools.builtins.tool_search import reset_deferred_registry
@@ -19,12 +23,66 @@ SUBAGENT_TOOLS = [
     # task_status_tool is no longer exposed to LLM (backend handles polling internally)
 ]
 
+def load_agent_tools(agent_name: str | None) -> list[BaseTool]:
+    """Load custom tools from an agent's tools.py file.
+
+    Args:
+        agent_name: The name of the agent.
+
+    Returns:
+        List of BaseTool objects loaded from the agent's tools.py file.
+    """
+    if not agent_name:
+        return []
+
+    try:
+        agent_dir = get_paths().agent_dir(agent_name)
+        tools_file = agent_dir / "tools.py"
+
+        if not tools_file.exists():
+            return []
+
+        # Create a module spec from the file
+        spec = importlib.util.spec_from_file_location(f"agent_tools_{agent_name}", str(tools_file))
+        if not spec or not spec.loader:
+            logger.warning(f"Failed to create module spec for {tools_file}")
+            return []
+
+        # Create a module from the spec
+        module = importlib.util.module_from_spec(spec)
+        
+        # Add the module to sys.modules to avoid import issues
+        module_name = f"agent_tools_{agent_name}"
+        sys.modules[module_name] = module
+
+        # Execute the module to load the tools
+        spec.loader.exec_module(module)
+
+        # Extract all BaseTool instances from the module
+        tools = []
+        for name, obj in module.__dict__.items():
+            if isinstance(obj, BaseTool):
+                tools.append(obj)
+
+        logger.info(f"Loaded {len(tools)} custom tool(s) from {tools_file}")
+        return tools
+
+    except Exception as e:
+        logger.warning(f"Failed to load agent tools for '{agent_name}': {e}")
+        return []
+    finally:
+        # Clean up the temporary module from sys.modules
+        module_name = f"agent_tools_{agent_name}"
+        if module_name in sys.modules:
+            del sys.modules[module_name]
+
 
 def get_available_tools(
     groups: list[str] | None = None,
     include_mcp: bool = True,
     model_name: str | None = None,
     subagent_enabled: bool = False,
+    agent_name: str | None = None,
 ) -> list[BaseTool]:
     """Get all available tools from config.
 
@@ -36,6 +94,7 @@ def get_available_tools(
         include_mcp: Whether to include tools from MCP servers (default: True).
         model_name: Optional model name to determine if vision tools should be included.
         subagent_enabled: Whether to include subagent tools (task, task_status).
+        agent_name: Optional agent name to load custom tools from tools.py.
 
     Returns:
         List of available tools.
@@ -110,5 +169,8 @@ def get_available_tools(
     except Exception as e:
         logger.warning(f"Failed to load ACP tool: {e}")
 
-    logger.info(f"Total tools loaded: {len(loaded_tools)}, built-in tools: {len(builtin_tools)}, MCP tools: {len(mcp_tools)}, ACP tools: {len(acp_tools)}")
-    return loaded_tools + builtin_tools + mcp_tools + acp_tools
+    # Load custom agent tools if agent_name is provided
+    agent_tools = load_agent_tools(agent_name)
+
+    logger.info(f"Total tools loaded: {len(loaded_tools)}, built-in tools: {len(builtin_tools)}, MCP tools: {len(mcp_tools)}, ACP tools: {len(acp_tools)}, agent tools: {len(agent_tools)}")
+    return loaded_tools + builtin_tools + mcp_tools + acp_tools + agent_tools
